@@ -17,12 +17,11 @@ NAWS is designed with a focus on security, transparency, and decentralization. I
 
 
 ## Token Details
-Token Name: NAWS
-Token Symbol: NAWS
-Total Supply: 10,000,000,000 NAWS
-
-Contract Address(BEP-20): 
-Decimals: 18
+- Token Name: NAWS
+- Token Symbol: NAWS
+- Total Supply: 10,000,000,000 NAWS
+- Contract Address(BEP-20): 
+- Decimals: 18
 
 ## License
 This project is licensed under the MIT License.
