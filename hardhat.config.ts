@@ -11,6 +11,9 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  paths: {
+    sources: "./contracts",
+  },
 };
 
 export default config;
