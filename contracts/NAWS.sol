@@ -17,20 +17,82 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
     address public constant NAWS_COLDWALLET_MARKETING = 0x9afCD842F6dbCc63C5521E6593DCda5c670F3C4D;
     address public constant NAWS_COLDWALLET_RESERVE = 0xa9671aA2Ee1AbBC63002053A755642C1A31D9347;
 
+    struct TimelockInfo {
+        uint256 releaseTime; // Release timestamp
+        uint256 amount; // Amount locked
+    }
+
+    mapping(address => TimelockInfo[]) public timelocks; // Mapping of address to its timelocks
+
     constructor(address initialOwner)
         ERC20("NAWS", "NAWS")
         Ownable(initialOwner)
         ERC20Permit("NAWS")
     {
-        // Mint 20% of the total supply to each cold wallet
         uint256 initialSupply = 10000000000 * 10 ** decimals();
-        uint256 allocation = initialSupply / 5; // 20% allocation
+        _mint(NAWS_COLDWALLET_ECOSYSTEM, 1000000000 * 10 ** decimals());
+        _mint(NAWS_COLDWALLET_TEAM, 500000000 * 10 ** decimals());
+        _mint(NAWS_COLDWALLET_INVESTMENT, 500000000 * 10 ** decimals());
+        _mint(NAWS_COLDWALLET_MARKETING, 500000000 * 10 ** decimals());
+        _mint(NAWS_COLDWALLET_RESERVE, 0); 
 
-        _mint(NAWS_COLDWALLET_ECOSYSTEM, allocation);
-        _mint(NAWS_COLDWALLET_TEAM, allocation);
-        _mint(NAWS_COLDWALLET_INVESTMENT, allocation);
-        _mint(NAWS_COLDWALLET_MARKETING, allocation);
-        _mint(NAWS_COLDWALLET_RESERVE, allocation);
+        _initializeTimelocks();
+    }
+
+    // Initialize timelocks for each address
+    function _initializeTimelocks() internal {
+        uint256 month = 30 days;
+
+        // Ecosystem (Airdrop) timelocks for 18 months
+        for (uint256 i = 1; i <= 17; i++) {
+            timelocks[NAWS_COLDWALLET_ECOSYSTEM].push(TimelockInfo(block.timestamp + i * month, 55555556 * 10 ** decimals()));
+        }
+        timelocks[NAWS_COLDWALLET_ECOSYSTEM].push(TimelockInfo(block.timestamp + 18 * month, 55555552 * 10 ** decimals())); // Adjusted to make the total 2 billion
+
+        // Team timelocks for 24 months
+        for (uint256 i = 1; i <= 23; i++) {
+            timelocks[NAWS_COLDWALLET_TEAM].push(TimelockInfo(block.timestamp + i * month, 62500000 * 10 ** decimals()));
+        }
+        timelocks[NAWS_COLDWALLET_TEAM].push(TimelockInfo(block.timestamp + 24 * month, 62500000 * 10 ** decimals())); // No adjustment needed as total fits 2 billion
+
+        // Investment timelocks for 24 months (same as Team)
+        for (uint256 i = 1; i <= 23; i++) {
+            timelocks[NAWS_COLDWALLET_INVESTMENT].push(TimelockInfo(block.timestamp + i * month, 62500000 * 10 ** decimals()));
+        }
+        timelocks[NAWS_COLDWALLET_INVESTMENT].push(TimelockInfo(block.timestamp + 24 * month, 62500000 * 10 ** decimals())); // No adjustment needed
+
+        // Marketing timelocks for 36 months
+        for (uint256 i = 1; i <= 35; i++) {
+            timelocks[NAWS_COLDWALLET_MARKETING].push(TimelockInfo(block.timestamp + i * month, 41666667 * 10 ** decimals()));
+        }
+        timelocks[NAWS_COLDWALLET_MARKETING].push(TimelockInfo(block.timestamp + 36 * month, 41666655 * 10 ** decimals())); // Adjusted to make the total 2 billion
+
+        // Reserve timelocks for 36 months
+        for (uint256 i = 1; i <= 35; i++) {
+            timelocks[NAWS_COLDWALLET_RESERVE].push(TimelockInfo(block.timestamp + i * month, 55555555 * 10 ** decimals()));
+        }
+        timelocks[NAWS_COLDWALLET_RESERVE].push(TimelockInfo(block.timestamp + 36 * month, 55555525 * 10 ** decimals())); // Adjusted to make the total 2 billion
+    }
+
+    // Override the transfer function to include timelock checks
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Pausable) {
+        super._beforeTokenTransfer(from, to, amount);
+        _checkTimelocks(from, amount);
+    }
+
+    // Function to check timelocks before transferring tokens
+    function _checkTimelocks(address from, uint256 amount) internal view {
+        TimelockInfo[] storage locks = timelocks[from];
+        uint256 lockedAmount = 0;
+
+        for (uint256 i = 0; i < locks.length; i++) {
+            if (block.timestamp < locks[i].releaseTime) {
+                lockedAmount += locks[i].amount;
+            }
+        }
+
+        uint256 balance = balanceOf(from);
+        require(balance >= lockedAmount + amount, "Transfer amount exceeds available unlocked balance");
     }
 
     function pause() public onlyOwner {
@@ -42,7 +104,6 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
     }
 
     // The following functions are overrides required by Solidity.
-
     function _update(address from, address to, uint256 value)
         internal
         override(ERC20, ERC20Pausable, ERC20Votes)
