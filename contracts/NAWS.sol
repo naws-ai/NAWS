@@ -70,19 +70,19 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
 
     function _initializeColdWallets() internal {
         // Distribute initial tokens to cold wallets
-        _transfer(nawsColdWalletEcosystem, ALLOCATION_AMOUNT / 2);
-        _transfer(nawsColdWalletTeam, ALLOCATION_AMOUNT / 4);
-        _transfer(nawsColdWalletInvestment, ALLOCATION_AMOUNT / 4);
-        _transfer(nawsColdWalletMarketing, ALLOCATION_AMOUNT / 4);
+        _transfer(address(this), nawsColdWalletEcosystem, ALLOCATION_AMOUNT / 2);
+        _transfer(address(this), nawsColdWalletTeam, ALLOCATION_AMOUNT / 4);
+        _transfer(address(this), nawsColdWalletInvestment, ALLOCATION_AMOUNT / 4);
+        _transfer(address(this), nawsColdWalletMarketing, ALLOCATION_AMOUNT / 4);
     }
-
+    
     function _initializeVestingWallets() internal {
         // Distribute tokens to vesting contract wallets
-        _mint(address(ecosystemVestingContractWallet), ALLOCATION_AMOUNT / 2); // 1 billion tokens
-        _mint(address(teamVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3);  // 1.5 billion tokens
-        _mint(address(investmentVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3); // 1.5 billion tokens
-        _mint(address(marketingVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3); // 1.5 billion tokens
-        _mint(address(reserveVestingContractWallet), ALLOCATION_AMOUNT);       // 2 billion tokens
+        _transfer(address(this), address(ecosystemVestingContractWallet), ALLOCATION_AMOUNT / 2); // 1 billion tokens
+        _transfer(address(this), address(teamVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3);  // 1.5 billion tokens
+        _transfer(address(this), address(investmentVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3); // 1.5 billion tokens
+        _transfer(address(this), address(marketingVestingContractWallet), (ALLOCATION_AMOUNT / 4) * 3); // 1.5 billion tokens
+        _transfer(address(this), address(reserveVestingContractWallet), ALLOCATION_AMOUNT);       // 2 billion tokens
     }
 
     modifier notBanned(address account) {
