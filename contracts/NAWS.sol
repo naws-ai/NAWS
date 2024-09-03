@@ -58,16 +58,18 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
     // Function to check timelocks before transferring tokens
     function _checkTimelocks(address from, uint256 amount) internal view {
         uint256 lockedAmount = 0;
+        uint64 currentTime = uint64(block.timestamp);
+
         if (from == nawsEcosystemColdWallet) {
-            lockedAmount = nawsEcosystemVestingContract.vestedAmount(address(this)) - nawsEcosystemVestingContract.released(address(this));
+            lockedAmount = nawsEcosystemVestingContract.vestedAmount(address(this), currentTime) - nawsEcosystemVestingContract.released(address(this));
         } else if (from == nawsTeamColdWallet) {
-            lockedAmount = nawsTeamVestingContract.vestedAmount(address(this)) - nawsTeamVestingContract.released(address(this));
+            lockedAmount = nawsTeamVestingContract.vestedAmount(address(this), currentTime) - nawsTeamVestingContract.released(address(this));
         } else if (from == nawsInvestmentColdWallet) {
-            lockedAmount = nawsInvestmentVestingContract.vestedAmount(address(this)) - nawsInvestmentVestingContract.released(address(this));
+            lockedAmount = nawsInvestmentVestingContract.vestedAmount(address(this), currentTime) - nawsInvestmentVestingContract.released(address(this));
         } else if (from == nawsMarketingColdWallet) {
-            lockedAmount = nawsMarketingVestingContract.vestedAmount(address(this)) - nawsMarketingVestingContract.released(address(this));
+            lockedAmount = nawsMarketingVestingContract.vestedAmount(address(this), currentTime) - nawsMarketingVestingContract.released(address(this));
         } else if (from == nawsReserveColdWallet) {
-            lockedAmount = nawsReserveVestingContract.vestedAmount(address(this)) - nawsReserveVestingContract.released(address(this));
+            lockedAmount = nawsReserveVestingContract.vestedAmount(address(this), currentTime) - nawsReserveVestingContract.released(address(this));
         }
 
         uint256 available = balanceOf(from) - lockedAmount;
