@@ -15,13 +15,16 @@ NAWS is designed with a focus on security, transparency, and decentralization. I
 
 - Security and Transparency: We prioritize transparency and security. NAWS uses proven cryptographic methods to secure all transactions on the blockchain. Cold wallet storage adds an extra layer of protection.
 
-
 ## Token Details
 - Token Name: NAWS
 - Token Symbol: NAWS
 - Total Supply: 10,000,000,000 NAWS
 - Contract Address(BEP-20): 
 - Decimals: 18
+
+## Test
+ npx hardhat compile
+ npx hardhat test
 
 ## License
 This project is licensed under the MIT License.

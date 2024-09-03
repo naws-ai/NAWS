@@ -27,16 +27,19 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
 
     error TransferAmountExceedsUnlockedBalance(address from, uint256 requested, uint256 available);
 
-    constructor(address initialOwner)
-        ERC20("NAWS", "NAWS")
-        Ownable(initialOwner)
-        ERC20Permit("NAWS")
-    {
-        nawsEcosystemColdWallet = 0xe71277118C276Bef6F722F50F039EfD7aEe5AFAF;
-        nawsTeamColdWallet = 0x40ea4678523578839DE6ABcfA74711d38FBd5132;
-        nawsInvestmentColdWallet = 0xdD668C685d166b950BF3efCb53e49ED9E794976e;
-        nawsMarketingColdWallet = 0x9afCD842F6dbCc63C5521E6593DCda5c670F3C4D;
-        nawsReserveColdWallet = 0xa9671aA2Ee1AbBC63002053A755642C1A31D9347;
+    constructor(
+            address initialOwner,
+            address _nawsEcosystemColdWallet,
+            address _nawsTeamColdWallet,
+            address _nawsInvestmentColdWallet,
+            address _nawsMarketingColdWallet,
+            address _nawsReserveColdWallet
+        ) ERC20("NAWS", "NAWS") Ownable(initialOwner) ERC20Permit("NAWS") {
+            nawsEcosystemColdWallet = _nawsEcosystemColdWallet; //0xe71277118C276Bef6F722F50F039EfD7aEe5AFAF
+            nawsTeamColdWallet = _nawsTeamColdWallet; //0x40ea4678523578839DE6ABcfA74711d38FBd5132
+            nawsInvestmentColdWallet = _nawsInvestmentColdWallet; //0xdD668C685d166b950BF3efCb53e49ED9E794976e
+            nawsMarketingColdWallet = _nawsMarketingColdWallet; //0x9afCD842F6dbCc63C5521E6593DCda5c670F3C4D
+            nawsReserveColdWallet = _nawsReserveColdWallet; //0xa9671aA2Ee1AbBC63002053A755642C1A31D9347
 
         uint256 month = 30 days;
 
@@ -76,15 +79,6 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
         if (available < amount) {
             revert TransferAmountExceedsUnlockedBalance(from, amount, available);
         }
-    }
-
-    // Function to release vested tokens to their respective cold wallets
-    function releaseAllToColdWallets() external {
-        nawsEcosystemVestingContract.release(address(this));
-        nawsTeamVestingContract.release(address(this));
-        nawsInvestmentVestingContract.release(address(this));
-        nawsMarketingVestingContract.release(address(this));
-        nawsReserveVestingContract.release(address(this));
     }
 
     function _update(address from, address to, uint256 value)
