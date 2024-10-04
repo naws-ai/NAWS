@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC20Votes, ReentrancyGuard {
     // Cold wallet addresses (immutable for gas optimization)
-    address public immutable nawsColdWalletDeploy = 0x0E8612586c277e1ca343B9B653bb916B141B8081;
+    address public immutable nawsColdWalletDeploy = 0xD6c7eF117a12a2F7CfA13e8DF672D7B98dA2A46F;
     address public immutable nawsColdWalletEcosystem = 0xe71277118C276Bef6F722F50F039EfD7aEe5AFAF;
     address public immutable nawsColdWalletTeam = 0x40ea4678523578839DE6ABcfA74711d38FBd5132;
     address public immutable nawsColdWalletInvestment = 0xdD668C685d166b950BF3efCb53e49ED9E794976e;
@@ -34,9 +34,9 @@ contract NAWS is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC2
     error AddressIsBanned(address account);
 
     constructor()
-        ERC20("NAWS", "NAWS")
+        ERC20("NAWS.AI", "NAWS")
         Ownable(nawsColdWalletDeploy)
-        ERC20Permit("NAWS")
+        ERC20Permit("NAWS.AI")
     {
         // Validate cold wallet addresses
         require(nawsColdWalletDeploy != address(0), "Invalid deploy wallet address");
